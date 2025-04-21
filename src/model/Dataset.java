@@ -1,11 +1,15 @@
 package model;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Clase para gestionar un dataset de datos.
- * Permite almacenar la cabecera y las filas, obtener y modificar datos, y mostrarlos
+ * Permite almacenar la cabecera y las filas, obtener y modificar datos, y mostrarlos.
+ * También proporciona métodos para leer y escribir archivos CSV.
  */
 public class Dataset {
     private String[] header;
@@ -32,13 +36,13 @@ public class Dataset {
     /**
      * Modifica la fila en el índice especificado.
      * @param index Índice de la fila a modificar.
-     * param newRow Nueva fila.
+     * @param newRow Nueva fila.
      */
     public void modifyRow(int index, String[] newRow) { rows.set(index, newRow); }
 
     /**
      * Elimina la fila en el índice especificado.
-     * @param index Índeice de la fila a eliminar.
+     * @param index Índice de la fila a eliminar.
      */
     public void removeRow(int index) { rows.remove(index); }
 
@@ -61,5 +65,39 @@ public class Dataset {
     public void display() {
         if(header != null) System.out.println(String.join(",", header));
         rows.forEach(r -> System.out.println(String.join(",", r)));
+    }
+
+    /**
+     * Lee un fichero CSV y carga sus datos en este dataset.
+     * @param filename Nombre del fichero CSV.
+     * @param hasHeader Indica si el CSV contiene cabecera.
+     * @throws IOException Si ocurre un error al leer el fichero.
+     */
+    public void readCSV(String filename, boolean hasHeader) throws IOException {
+        List<String> lines = Files.readAllLines(Paths.get(filename));
+        if (hasHeader && !lines.isEmpty()) {
+            this.header = lines.get(0).split(",");
+            lines.remove(0);
+        }
+        rows.clear(); // Limpiar filas existentes en caso de que el dataset ya contenga datos
+        for (String line : lines) {
+            addRow(line.split(","));
+        }
+    }
+
+    /**
+     * Escribe el contenido del Dataset en un fichero CSV.
+     * @param filename Nombre del fichero de salida.
+     * @throws IOException Si ocurre un error al escribir el fichero.
+     */
+    public void writeCSV(String filename) throws IOException {
+        List<String> lines = new ArrayList<>();
+        if (header != null) {
+            lines.add(String.join(",", header));
+        }
+        for (String[] row : rows) {
+            lines.add(String.join(",", row));
+        }
+        Files.write(Paths.get(filename), lines);
     }
 }

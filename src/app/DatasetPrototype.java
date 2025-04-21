@@ -1,7 +1,5 @@
 package app;
 
-import io.CSVHandler;
-import io.ICSVHandler;
 import model.Dataset;
 import metrics.EuclideanDistance;
 import metrics.DistanceMetric;
@@ -22,14 +20,13 @@ public class DatasetPrototype {
      */
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        ICSVHandler csvHandler = new CSVHandler();
-        Dataset dataset = null;
+        Dataset dataset = new Dataset();
 
         // Lectura del dataset desde un archivo CSV
         try {
             System.out.print("Introduce el nombre del fichero CSV a leer: ");
             String filename = sc.nextLine();
-            dataset = csvHandler.readCSV(filename, true);
+            dataset.readCSV(filename, true);
             System.out.println("\nDataset leído:");
             dataset.display();
         } catch (IOException e) {
@@ -56,7 +53,7 @@ public class DatasetPrototype {
         try {
             System.out.print("\nIntroduce el nombre del fichero CSV para guardar los cambios: ");
             String outputFile = sc.nextLine();
-            csvHandler.writeCSV(outputFile, dataset);
+            dataset.writeCSV(outputFile);
             System.out.println("Dataset guardado en " + outputFile);
         } catch (IOException e) {
             System.err.println("Error al guardar el fichero: " + e.getMessage());
